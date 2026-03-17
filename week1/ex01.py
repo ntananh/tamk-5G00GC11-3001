@@ -216,7 +216,26 @@ as parameters.
 
 
 def climb(state_id: str, neighbors_function: callable, value_function: callable) -> list:
-    return []  # replace this by your function body implementation!
+    current_state = state_id
+    visited_states = [current_state]
+
+    while True:
+        neighbor_states = neighbors_function(current_state)
+
+        if not neighbor_states:
+            break
+
+        best_neighbor = max(neighbor_states, key=value_function)
+        current_value = value_function(current_state)
+        best_value = value_function(best_neighbor)
+
+        if best_value > current_value:
+            current_state = best_neighbor
+            visited_states.append(current_state)
+        else:
+            break
+
+    return visited_states
 
 
 
@@ -231,6 +250,8 @@ def climb(state_id: str, neighbors_function: callable, value_function: callable)
 # report is as comments or within a (multiline) string literal,
 # so that it does not produce any exceptions or other problems.)
 """
+1. I'm using AI to help me understand graph theory, and how stack helps in recursive.
+2. For second problem, I used AI to clarify some concerns about prolem how it map to graph prolem.
 """
 
 
