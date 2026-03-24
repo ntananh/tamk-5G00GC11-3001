@@ -161,9 +161,40 @@ even for that example maze.)
 
 """
 
+from collections import deque
 
 def maze(file_path: str) -> list:
-    return []  # replace this by your function body implementation!
+    with open(file_path) as f:
+        grid = [line.rstrip('\n') for line in f]
+        start = (0, 0)
+        for y, row in enumerate(grid):
+            for x, ch in enumerate(row):
+                if ch == 'S':
+                    start = (x+1, y+1)
+
+        queue = deque([start])
+        came_from: dict[tuple[int, int], tuple[int, int] | None]  = {start: None}
+
+    current = start
+    while queue:
+        current = queue.popleft()
+        if grid[current[1] -1][current[0] -1] == 'G':
+            break
+        for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+            neighbor = (current[0] + dx, current[1] + dy)
+            nx, ny = neighbor
+            if neighbor not in came_from and grid[ny -1][nx -1] in '.G':
+                came_from[neighbor] = current
+                queue.append(neighbor)
+
+    path = []
+    while current != start:
+        path.append(current)
+        assert current is not None
+        current = came_from[current]
+    path.reverse()
+    return path
+
           
 # You can test your implementation by calling, e.g., 
 # maze('example_maze.txt'). Remember to remove or comment out
@@ -183,7 +214,7 @@ def maze(file_path: str) -> list:
 # report is as comments or within a (multiline) string literal, 
 # so that it does not produce any exceptions or other problems.)
 """
-
+I used Claude to explain coordinate indexing for this task. I wrote the code myself step by step with hints
 """
 
 
