@@ -125,9 +125,17 @@ Be careful to return a list (not, e.g., a numpy array or such).
 """
 
 def estimate_values_based_on_data(data_file: str, x_values: list) -> list:
-    pass  # implementation here
-    
+    data = numpy.loadtxt(data_file, delimiter=",")
+    X = data[:, 0] 
+    y = data[:, 1] 
 
+    X = X.reshape(-1 , 1)
+
+    model = LinearRegression()
+    model.fit(X, y)
+
+    X_pred = numpy.array(x_values).reshape(-1, 1)
+    return model.predict(X_pred).tolist()
 
 #########################
 # AI tools usage report #
@@ -138,11 +146,12 @@ def estimate_values_based_on_data(data_file: str, x_values: list) -> list:
 # If you have used any such tool(s), replace the '___' strings 
 # with appropriate (brief) informational texts.
 """
-I have used these AI tools (list): ___
+I have used these AI tools (list): Claude
 
-How? ___
+How? I asked about math concept of Linear Regression
 
-For what purposes? ___
+For what purposes? To explain what is LinearRegression, 
+revise math knowledge.
 
 [] I have not used any AI tools in my work.
 
@@ -151,6 +160,6 @@ for some purposes. This is forbidden and considered as
 a fraud, of which I should be aware already. The case will
 be handled according to the TAMK policy on academic integrity.
 
-[] I hereby guarantee that I have not given the task instructions 
+[X] I hereby guarantee that I have not given the task instructions 
 to any external AI tool.
 """
