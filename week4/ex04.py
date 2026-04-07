@@ -174,7 +174,51 @@ will not, most probably, be the case, so make sure to call it.)
 """
 
 def regr_nn() -> float:
-    pass  # Replace this with your implementation.
+    train_df = pd.read_csv("ex04train.csv")
+    val_df = pd.read_csv("ex04validation.csv")
+
+    X_train = torch.tensor(train_df["x"].values, dtype=torch.float32).unsqueeze(1)
+    y_train = torch.tensor(train_df["y"].values, dtype=torch.float32).unsqueeze(1)
+    X_val = torch.tensor(val_df["x"].values, dtype=torch.float32).unsqueeze(1)
+    y_val = torch.tensor(val_df["y"].values, dtype=torch.float32).unsqueeze(1)
+    
+    model = nn.Sequential(
+        nn.Linear(1, 32),
+        nn.Tanh(),
+        nn.Linear(32, 32),
+        nn.Tanh(),
+        nn.Linear(32, 1),
+    )
+
+    optimizer = optim.Adam(model.parameters(), lr=0.01)
+    loss_fn = nn.MSELoss()
+    for _ in range(3000):
+        model.train()
+        optimizer.zero_grad()
+        loss = loss_fn(model(X_train), y_train)
+        loss.backward()
+        optimizer.step()
+    
+    model.eval()
+    with torch.no_grad():
+        val_preds = model(X_val)
+        mse = loss_fn(val_preds, y_val).item()
+    
+    sort_idx = val_df["x"].argsort().values
+    x_val_sorted = val_df["x"].values[sort_idx]
+    pred_sorted = val_preds.numpy()[sort_idx].flatten()
+    
+    plt.figure()
+    plt.scatter(train_df["x"], train_df["y"], color="blue", label="Train data", s=10)
+    plt.scatter(val_df["x"], val_df["y"], color="orange", label="Validation data", s=10, zorder=3)
+    plt.scatter(x_val_sorted, pred_sorted, color="red", label="Predictions", s=10, zorder=4)
+    plt.legend()
+    plt.title("Regression NN: predictions vs data")
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.show()
+
+    return mse
 
 
 #########################
@@ -186,19 +230,19 @@ def regr_nn() -> float:
 # If you have used any such tool(s), replace the '___' strings 
 # with appropriate (brief) informational texts.
 """
-I have used these AI tools (list): ___
+I have used these AI tools (list): ChatGPT
 
-How? ___
+How? Used it to explain how regression differs from classification in a neural network.
 
-For what purposes? ___
+For what purposes? Getting help with PyTorch syntax and explain neural network concept.
 
 [] I have not used any AI tools in my work.
 
 [] I have given the task instructions to an external AI tool
-for some purposes. This is forbidden and considered as 
+for some purposes. This is forbidden and considered as
 a fraud, of which I should be aware already. The case will
 be handled according to the TAMK policy on academic integrity.
 
-[] I hereby guarantee that I have not given the task instructions 
+[X] I hereby guarantee that I have not given the task instructions
 to any external AI tool.
 """
